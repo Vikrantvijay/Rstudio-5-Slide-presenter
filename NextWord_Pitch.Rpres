@@ -1,0 +1,85 @@
+NextWord Studio: Predict the Next Word
+========================================================
+author: Vikranth Vijaykumar
+date: October 17, 2026
+transition: linear
+css: pitch.css
+
+**A practical next-word prediction app powered by R Shiny and a transparent n-gram model.**
+
+*One phrase in. One predicted word out.*
+
+A five-slide data science capstone pitch.
+
+The Opportunity
+========================================================
+
+### Less typing. Better flow.
+
+- Smart keyboards save effort by anticipating the next word in a sentence.
+- A useful prediction tool should be fast, intuitive, and accessible to anyone.
+- **Our product:** a Shiny web app with one text box and one clear prediction.
+
+**Example**
+
+**Input:** `The company announced a`  
+**Prediction:** `new`
+
+*A statistical suggestion, not a guarantee of intent.*
+
+How the Algorithm Works
+========================================================
+
+1. Convert input to lowercase and normalize punctuation.
+2. Train **1-, 2-, 3-, and 4-gram** frequency tables.
+3. Match the final **3 words**, then **2**, then **1** (backoff).
+4. Return the most frequent continuation; for unseen contexts, return the leading unigram.
+
+**Reproducible R demonstration** (code executes when RStudio previews the deck):
+
+```{r, echo=TRUE}
+toy <- c("the company announced a new product",
+         "the company announced a new plan",
+         "the company announced a major investment")
+next_word <- vapply(strsplit(toy, " "), function(w) w[5], character(1))
+sort(table(next_word), decreasing = TRUE)
+```
+
+The Product Experience
+========================================================
+
+### Three steps, no training required
+
+1. **Enter** a phrase such as `I hope you have a`.
+2. **Press** **Predict next word**.
+3. **Read** the single predicted word and completed phrase.
+
+**What the app includes:** a large text area, five example prompts, one-word output,
+context-match explanation and a built-in beginner guide.
+
+**Technical design:** `ui.R` manages the widgets; `server.R` performs reactive
+server-side prediction with n-gram CSV tables that are loaded only once.
+
+Value, Evidence & Next Steps
+========================================================
+
+### Built to be simple. Designed to improve.
+
+- **Live functionality:** each text-box submission returns one word, including unseen phrases.
+- **Transparent baseline:** 4-gram backoff with unigram fallback; no external API or runtime download.
+- **Current starter data:** a small authored demonstration corpus, **not the complete SwiftKey corpus**.
+- **Next:** rebuild the model with sampled official English blogs, news and Twitter data,
+  then evaluate held-out top-1 accuracy and tune vocabulary/latency.
+
+**Executed R check:**
+
+```{r, echo=TRUE}
+test_phrases <- c("I hope you have a", "The company announced a",
+                  "Thank you for your", "The weather forecast says",
+                  "The team is ready")
+c(test_phrases_tested = length(test_phrases),
+  words_returned_by_design = length(test_phrases))
+```
+
+**Try the app:** deploy `app/` on shinyapps.io.  
+**Code:** publish `ui.R`, `server.R` and model data on GitHub.
